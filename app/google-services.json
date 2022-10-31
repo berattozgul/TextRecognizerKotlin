@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "672442851791",
+    "project_id": "textrecognizerkotlin",
+    "storage_bucket": "textrecognizerkotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672442851791:android:bc53153e27d2c0957372ba",
+        "android_client_info": {
+          "package_name": "com.example.textrecognizerkotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672442851791-jog9va8cra0uradd9f53jg3b8rab5mkq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBjt6w3deshACkgPvXVZvmTMqy1cag6b4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672442851791-jog9va8cra0uradd9f53jg3b8rab5mkq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
