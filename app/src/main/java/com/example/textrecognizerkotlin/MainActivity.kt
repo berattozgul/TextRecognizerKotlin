@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -47,8 +48,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var scanImageBt: Button
     lateinit var scannedText: TextView
     private var image_uri: Uri? = null
-
-
+    private lateinit var sqlSQLiteHelper: SQLiteHelper
     lateinit var drawerLayout: DrawerLayout
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     lateinit var navigationView: NavigationView
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         scannedText = findViewById(R.id.scanned_text)
         drawerLayout = findViewById(R.id.drawerLayoutMain)
         navigationView = findViewById(R.id.nav_view_main)
+        sqlSQLiteHelper = SQLiteHelper(this)
         actionBarDrawerToggle =
             ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
 
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "There is no scanned text here!", Toast.LENGTH_SHORT).show()
             } else {
                 copyToClipboard(scannedText.text)
+                addToHistory()
             }
         }
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
@@ -100,14 +102,12 @@ class MainActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_text_recognizer -> {
-                    Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                     if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                         drawerLayout.closeDrawer(GravityCompat.START)
                     }
                     true
                 }
                 R.id.nav_history -> {
-                    Toast.makeText(this, "Account", Toast.LENGTH_SHORT).show()
                     if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                         drawerLayout.closeDrawer(GravityCompat.START)
                     }
@@ -122,6 +122,16 @@ class MainActivity : AppCompatActivity() {
 
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun addToHistory() {
+        val text = scannedText.text.toString()
+        val history = HistoryModel(text = text)
+        val status = sqlSQLiteHelper.insertText(history)
+        if (status > -1) {
+            Toast.makeText(this, "Added to History", Toast.LENGTH_SHORT).show()
+
+        }
     }
 
     fun Context.copyToClipboard(text: CharSequence) {

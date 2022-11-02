@@ -2,9 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_text_recognizer"
+        android:icon="@drawable/ic_doc_scanner"
         android:title="Text Recognizer" />
 
     <item
         android:id="@+id/nav_history"
+        android:icon="@drawable/ic_history"
         android:title="History" />
 </menu>
