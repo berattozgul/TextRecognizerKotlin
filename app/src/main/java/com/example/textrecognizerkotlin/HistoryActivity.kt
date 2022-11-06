@@ -1,6 +1,5 @@
 package com.example.textrecognizerkotlin
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,8 +27,8 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_history)
         drawerLayout = findViewById(R.id.drawerLayoutHistory)
         navigationView = findViewById(R.id.nav_view_history)
-        sqLiteHelper=SQLiteHelper(this)
-        recyclerView=findViewById(R.id.recyclerView)
+        sqLiteHelper = SQLiteHelper(this)
+        recyclerView = findViewById(R.id.recyclerView)
         initRecyclerView()
         actionBarDrawerToggle =
             ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
@@ -59,41 +58,45 @@ class HistoryActivity : AppCompatActivity() {
         }
         getHistory()
         adapter?.setOnClickItem {
-            Toast.makeText(this,it.text,Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, it.text, Toast.LENGTH_SHORT).show()
+            val value: String = it.text// or just your string
+            val intent = Intent(this, ScannedTextActivity::class.java)
+            intent.putExtra("value", value)
+            startActivity(intent)
         }
         adapter?.setOnClickDeleteItem {
             deleteHistoryItem(it.id)
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
-    private fun deleteHistoryItem(id:Int){
-        if(id==null) return
-        val builder=AlertDialog.Builder(this)
+
+    private fun deleteHistoryItem(id: Int) {
+        if (id == null) return
+        val builder = AlertDialog.Builder(this)
         builder.setMessage("Are you sure do you want to delete item?")
         builder.setCancelable(true)
-        builder.setPositiveButton("yes"){
-                dialog, _ ->
+        builder.setPositiveButton("yes") { dialog, _ ->
             sqLiteHelper.deleteHistoryByID(id)
             getHistory()
             dialog.dismiss()
         }
-        builder.setNegativeButton("No"){
-                dialog, _ ->
+        builder.setNegativeButton("No") { dialog, _ ->
             dialog.dismiss()
         }
-        val alert=builder.create()
+        val alert = builder.create()
         alert.show()
     }
 
     private fun getHistory() {
-        val historyList= sqLiteHelper.getAllTexts()
+        val historyList = sqLiteHelper.getAllTexts()
         adapter?.addItems(historyList)
     }
 
     private fun initRecyclerView() {
-        recyclerView.layoutManager=LinearLayoutManager(this)
-        adapter=HistoryAdapter()
-        recyclerView.adapter=adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = HistoryAdapter()
+        recyclerView.adapter = adapter
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

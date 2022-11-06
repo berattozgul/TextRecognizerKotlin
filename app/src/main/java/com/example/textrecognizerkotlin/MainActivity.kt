@@ -7,11 +7,12 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.view.MenuItem
@@ -24,6 +25,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.HandlerCompat.postDelayed
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
@@ -38,16 +40,26 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 class MainActivity : AppCompatActivity() {
+
     private val CAMERA_REQUEST_CODE = 1
     private val GALLERY_REQUEST_CODE = 2
+
+
     lateinit var imageView: ImageView
     lateinit var getImageBt: Button
     lateinit var scanImageBt: Button
     lateinit var scannedText: TextView
+
+
     private var image_uri: Uri? = null
+
+
     private lateinit var sqlSQLiteHelper: SQLiteHelper
     lateinit var drawerLayout: DrawerLayout
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -56,13 +68,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         imageView = findViewById(R.id.imageView)
         getImageBt = findViewById(R.id.get_image_bt)
         scanImageBt = findViewById(R.id.scan_image_bt)
         scannedText = findViewById(R.id.scanned_text)
+
+
+
         drawerLayout = findViewById(R.id.drawerLayoutMain)
         navigationView = findViewById(R.id.nav_view_main)
+
+
         sqlSQLiteHelper = SQLiteHelper(this)
+
         actionBarDrawerToggle =
             ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
 
@@ -78,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             })
             popupMenu.show()
         }
+
+
         scanImageBt.setOnClickListener {
             if (imageView.drawable.constantState == ContextCompat.getDrawable(
                     this,
@@ -87,18 +108,24 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please Select Image First!", Toast.LENGTH_SHORT).show()
             } else {
                 recognizeText()
+
             }
         }
+
+
         scannedText.setOnClickListener {
             if (scannedText.text.isEmpty()) {
                 Toast.makeText(this, "There is no scanned text here!", Toast.LENGTH_SHORT).show()
             } else {
                 copyToClipboard(scannedText.text)
-                addToHistory()
             }
         }
+
+
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
+
+
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_text_recognizer -> {
@@ -121,16 +148,21 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun addToHistory() {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        val formatted = current.format(formatter)
         val text = scannedText.text.toString()
-        val history = HistoryModel(text = text)
+        val history = HistoryModel(text = text, time = formatted)
         val status = sqlSQLiteHelper.insertText(history)
         if (status > -1) {
             Toast.makeText(this, "Added to History", Toast.LENGTH_SHORT).show()
-
+        } else {
+            Toast.makeText(this, "Can't add to history", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -172,6 +204,7 @@ class MainActivity : AppCompatActivity() {
             val blockText = block.text
             scannedText.append(blockText + "\n")
         }
+        addToHistory()
     }
 
     private fun galleryCheckPermission() {
@@ -245,22 +278,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_OK) {
-
             when (requestCode) {
-
                 CAMERA_REQUEST_CODE -> {
-
                     val bitmap = data?.extras?.get("data") as Bitmap
-
-                    //we are using coroutine image loader (coil)
                     imageView.setImageBitmap(bitmap)
 
                 }
 
                 GALLERY_REQUEST_CODE -> {
-
                     imageView.setImageURI(data?.data)
                     image_uri = data?.data
                 }

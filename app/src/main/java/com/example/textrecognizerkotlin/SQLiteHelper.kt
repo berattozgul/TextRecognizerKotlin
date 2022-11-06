@@ -15,11 +15,12 @@ class SQLiteHelper(context: Context) :
         private const val TBL_HISTORY = "tbl_history"
         private const val ID = "id"
         private const val TEXT = "text"
+        private const val TIME = "time"
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
         val createTableText =
-            ("CREATE TABLE " + TBL_HISTORY + "(" + ID + " INTEGER PRIMARY KEY," + TEXT + " text)")
+            ("CREATE TABLE $TBL_HISTORY($ID INTEGER PRIMARY KEY,$TEXT text,$TIME text)")
         p0?.execSQL(createTableText)
     }
 
@@ -33,6 +34,7 @@ class SQLiteHelper(context: Context) :
         val contentValues = ContentValues()
         contentValues.put(ID, txt.id)
         contentValues.put(TEXT, txt.text)
+        contentValues.put(TIME, txt.time)
         val success = db.insert(TBL_HISTORY, null, contentValues)
         db.close()
         return success
@@ -54,11 +56,13 @@ class SQLiteHelper(context: Context) :
         }
         var id: Int
         var text: String
+        var time: String
         if (cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(cursor.getColumnIndex("id"))
                 text = cursor.getString(cursor.getColumnIndex("text"))
-                val text = HistoryModel(id = id, text = text)
+                time = cursor.getString(cursor.getColumnIndex("time"))
+                val text = HistoryModel(id = id, text = text, time = time)
                 txtList.add(text)
             } while (cursor.moveToNext())
         }
@@ -66,10 +70,10 @@ class SQLiteHelper(context: Context) :
     }
 
     fun deleteHistoryByID(id: Int): Int {
-        val db=this.writableDatabase
-        val contentValues=ContentValues()
-        contentValues.put(ID,id)
-        val success=db.delete(TBL_HISTORY, "id=$id",null)
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(ID, id)
+        val success = db.delete(TBL_HISTORY, "id=$id", null)
         db.close()
         return success
     }

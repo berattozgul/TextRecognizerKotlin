@@ -8,23 +8,42 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:id="@+id/tvText"
-            android:layout_height="wrap_content">
+        android:divider="?android:dividerHorizontal"
+        android:orientation="vertical"
+        android:showDividers="end">
 
+        <TextView
+            android:id="@+id/timestampTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
         </TextView>
 
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </TextView>
+
     </LinearLayout>
+
     <Button
-        android:layout_width="wrap_content"
         android:id="@+id/historyDeleteButton"
-        android:text="delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:layout_height="wrap_content">
+        android:text="delete">
 
     </Button>
 

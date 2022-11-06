@@ -1,6 +1,5 @@
 package com.example.textrecognizerkotlin
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +16,13 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHoler>() {
         this.historyList = items
         notifyDataSetChanged()
     }
-    fun setOnClickItem(callback: (HistoryModel)-> Unit){
-        this.onClickItem=callback
+
+    fun setOnClickItem(callback: (HistoryModel) -> Unit) {
+        this.onClickItem = callback
     }
-    fun setOnClickDeleteItem(callback: (HistoryModel) -> Unit){
-        this.onClickDeleteItem=callback
+
+    fun setOnClickDeleteItem(callback: (HistoryModel) -> Unit) {
+        this.onClickDeleteItem = callback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = HistoryViewHoler(
@@ -47,9 +48,11 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHoler>() {
     class HistoryViewHoler(var view: View) : RecyclerView.ViewHolder(view) {
         var txt = view.findViewById<TextView>(R.id.tvText)
         var btnDelete = view.findViewById<Button>(R.id.historyDeleteButton)
+        var time = view.findViewById<TextView>(R.id.timestampTv)
 
         fun bindView(hstry: HistoryModel) {
             txt.text = hstry.text
+            time.text = hstry.time
         }
     }
 }
